@@ -663,7 +663,6 @@ class citation
             $array_citation["publisher"] = $citacao["publisher"]["organization"]["name"];
 	} elseif (!empty($citacao["unidadeUSP"])){
 	    $array_citation["publisher"] = $unidades[$citacao["unidadeUSP"][0]]." &#8211; Universidade de São Paulo";
-	    //$array_citation["publisher"] = $unidadesUSP[$citacao["unidadeUSP"][0]];
 	    }
         if (!empty($citacao["publisher"]["organization"]["location"])) {
             $array_citation["publisher-place"] = $citacao["publisher"]["organization"]["location"];
