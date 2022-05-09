@@ -380,13 +380,14 @@ class Facets
             echo '<a href="#" style="color:#123e72;">'.$field_name.'</a>';
             echo ' <ul class="uk-nav-sub">';
             foreach ($response["aggregations"]["counts"]["buckets"] as $facets) {
-                if ($facets['key'] == "Não preenchido") {
-                    if (!empty($_SESSION['oauthuserdata'])) {
+		if ($facets['key'] == "Não preenchido") {
+                    echo '';
+                    /*if (!empty($_SESSION['oauthuserdata'])) {
                         echo '<li>';
                         echo '<div uk-grid>
                             <div class="uk-width-3-3 uk-text-small" style="color:#333"><a class="'.$classHtmlElement.'" href="//'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=-_exists_:'.$field.'">'.mb_strtolower($facets['key'], "UTF-8").' ('.number_format($facets['doc_count'], 0, ',', '.').')</a></div>';
                         echo '</div></li>';
-                    }
+		    }*/
                 } else {
                     if (!empty($_SESSION['oauthuserdata'])) {
                         echo '<li>';
@@ -398,9 +399,9 @@ class Facets
                         echo '</div></div></li>';                       
 
                     } else {
-                        echo '<li>';
+			    echo '<li>';
                         echo '<div uk-grid>
-                            <div class="uk-width-2-3 uk-text-small" style="color:#333"><a class="'.$classHtmlElement.' link" href="//'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="font-size: 90%">'.mb_strtolower($facets['key'], "UTF-8").'</a></div>
+                            <div class="uk-width-2-3 uk-text-small" style="color:#333"><a class="'.$classHtmlElement.' link" href="//'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="font-size: 90%">'.mb_strtolower($facets['key'], "UTF-8").' (~'.number_format($facets['doc_count'],0,',','.').')</a></div>
                             <div class="uk-width-1-3" style="color:#333">
                             <a class="link" href="//'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&notFilter[]='.$field.':&quot;'.$facets['key'].'&quot;" title="Remover do resultado"><span uk-icon="icon: minus-circle; ratio: 1"></span></a>
                             ';
@@ -417,13 +418,14 @@ class Facets
             echo '<a href="#"  style="color:#123e72;">'.$field_name.'</a>';
             echo ' <ul class="uk-nav-sub">';
             while ($i < 5) {
-                if ($response["aggregations"]["counts"]["buckets"][$i]['key'] == "Não preenchido") {
-                    if (!empty($_SESSION['oauthuserdata'])) {
+		if ($response["aggregations"]["counts"]["buckets"][$i]['key'] == "Não preenchido") {
+		    echo '';
+                    /*if (!empty($_SESSION['oauthuserdata'])) {
                         echo '<li>';
                         echo '<div uk-grid>
                             <div class="uk-width-3-3 uk-text-small" style="color:#333"><a class="'.$classHtmlElement.'" href="//'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=-_exists_:'.$field.'">'.mb_strtolower($response["aggregations"]["counts"]["buckets"][$i]['key'], "UTF-8").' ('.number_format($response["aggregations"]["counts"]["buckets"][$i]['doc_count'],0,',','.').')</a></div>';
                         echo '</div></li>';
-                    }
+		    }*/
                 } else {
                         echo '<li>';
                         echo '<div uk-grid>
@@ -453,13 +455,14 @@ class Facets
             ';
 
             foreach ($response["aggregations"]["counts"]["buckets"] as $facets) {
-                if ($facets['key'] == "Não preenchido") {
-                    if (!empty($_SESSION['oauthuserdata'])) {
+		    if ($facets['key'] == "Não preenchido") {
+	                echo '';
+                    /*if (!empty($_SESSION['oauthuserdata'])) {
                         echo '<li>';
 			echo '<div uk-grid>
                              <div class="uk-width-3-3 uk-text-small" style="color:#333"><a class="'.$classHtmlElement.'" href="//'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=-_exists_:'.$field.'">'.mb_strtolower($facets['key'], "UTF-8").' ('.number_format($facets['doc_count'], 0, ',', '.').')</a></div>';
                         echo '</div></li>';
-                    }
+		}*/
 
                 } else {
                     if ($facets['key'] == "Não preenchido") {
@@ -584,7 +587,6 @@ class Facets
 
 class citation
 {
-
     /* Pegar o tipo de material */
     static function get_type($material_type)
     {
@@ -613,19 +615,28 @@ class citation
         case "TEXTO NA WEB":
             return "post-weblog";
         break;
+        case "TRABALHO DE CONCLUSAO DE CURSO - TCC":
+            return "thesis";
+	break;
         }
     }
-
+    
     static function citation_query($citacao)
     {
-
+	include_once 'unidades.php';
         $array_citation = [];
-        $array_citation["type"] = citation::get_type($citacao["type"]);
-        $array_citation["title"] = $citacao["name"];
+	$array_citation["type"] = citation::get_type($citacao["type"]);
+	$array_citation["title"] = $citacao["name"];
+
+	if(!empty($citacao["inSupportOf"])){
+		$array_citation["genre"] = $citacao["inSupportOf"];
+	}
 
         if (!empty($citacao["author"])) {
             $i = 0;
-            foreach ($citacao["author"] as $authors) {
+	    foreach ($citacao["author"] as $authors) {
+		if(isset($authors['person']['potentialAction']))
+			continue;
                 $array_authors = explode(',', $authors["person"]["name"]);
                 $array_citation["author"][$i]["family"] = $array_authors[0];
                 if (!empty($array_authors[1])) {
@@ -633,7 +644,7 @@ class citation
                 }
                 $i++;
             }
-        }
+	}
 
         if (!empty($citacao["isPartOf"]["name"])) {
             $array_citation["container-title"] = $citacao["isPartOf"]["name"];
@@ -650,7 +661,10 @@ class citation
 
         if (!empty($citacao["publisher"]["organization"]["name"])) {
             $array_citation["publisher"] = $citacao["publisher"]["organization"]["name"];
-        }
+	} elseif (!empty($citacao["unidadeUSP"])){
+	    $array_citation["publisher"] = $unidades[$citacao["unidadeUSP"][0]]." &#8211; Universidade de São Paulo";
+	    //$array_citation["publisher"] = $unidadesUSP[$citacao["unidadeUSP"][0]];
+	    }
         if (!empty($citacao["publisher"]["organization"]["location"])) {
             $array_citation["publisher-place"] = $citacao["publisher"]["organization"]["location"];
         }
