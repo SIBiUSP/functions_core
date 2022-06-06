@@ -587,6 +587,7 @@ class Facets
 
 class citation
 {
+    
     /* Pegar o tipo de material */
     static function get_type($material_type)
     {
@@ -623,7 +624,7 @@ class citation
     
     static function citation_query($citacao)
     {
-	include_once 'unidades.php';
+	include 'unidades.php';
         $array_citation = [];
 	$array_citation["type"] = citation::get_type($citacao["type"]);
 	$array_citation["title"] = $citacao["name"];
@@ -654,7 +655,11 @@ class citation
         }
         if (!empty($citacao["url"][0])) {
             $array_citation["URL"] = $citacao["url"][0];
-        }
+	} elseif(!empty($citacao["DOI"])){
+	    $array_citation["URL"] = 'https://doi.org/'.$citacao["DOI"];
+	} elseif(!empty($citacao["files"]["database"][0]["file_link"])){
+	    $array_citation["URL"] = $citacao["files"]["database"][0]["file_link"];
+	}
         if ($citacao["base"][0] == "Teses e dissertações") {
             $citacao["publisher"]["organization"]["name"] = "Universidade de São Paulo";
         }
@@ -662,8 +667,8 @@ class citation
         if (!empty($citacao["publisher"]["organization"]["name"])) {
             $array_citation["publisher"] = $citacao["publisher"]["organization"]["name"];
 	} elseif (!empty($citacao["unidadeUSP"])){
-	    $array_citation["publisher"] = $unidades[$citacao["unidadeUSP"][0]]." &#8211; Universidade de São Paulo";
-	    }
+	    $array_citation["publisher"] = ' '.$unidades[$citacao["unidadeUSP"][0]].', Universidade de São Paulo';
+	}
         if (!empty($citacao["publisher"]["organization"]["location"])) {
             $array_citation["publisher-place"] = $citacao["publisher"]["organization"]["location"];
         }
@@ -683,8 +688,8 @@ class citation
                 }
 
             }
-        }
-
+	}
+	$array_citation["accessed"]["date-parts"] = [[date('Y'), date('m'), date('d')]];
         $json = json_encode($array_citation);
 	$data = json_decode($json);
         return $data;
