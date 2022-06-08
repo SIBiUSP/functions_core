@@ -628,6 +628,9 @@ class citation
         $array_citation = [];
 	$array_citation["type"] = citation::get_type($citacao["type"]);
 	$array_citation["title"] = $citacao["name"];
+	$title_parts = explode(': ',$citacao["name"]);
+	$array_citation["title-short"] = $title_parts[0];
+	$array_citation["subtitle"] = $title_parts[1];
 
 	if(!empty($citacao["inSupportOf"])){
 		$array_citation["genre"] = $citacao["inSupportOf"];
