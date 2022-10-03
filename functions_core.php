@@ -727,12 +727,13 @@ class ui {
         }
         echo '</ul>';
 	echo '</div>';*/
-	echo '<div class="uk-width-auto@m">';
+	echo '<div class="uk-width-1-5@m">';
+	/*echo '<div class="uk-width-auto@m">';
         if (isset($_GET["sort"])) {
             echo '<a href="//'.$_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'].'?'.str_replace('&sort='.$_GET["sort"].'', "", $_SERVER['QUERY_STRING']).'">'.$t->gettext('Ordenar por Data').'</a>';
         } else {
             echo '<a href="//'.$_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING'].'&sort=name.keyword">'.$t->gettext('Ordenar por Título').'</a>';
-        }
+        }*/
 	echo '</div>';
 	
 	/* Adiciona paginador numérico com 5 páginas antes e 5 páginas depois da página atual */
