@@ -1070,6 +1070,14 @@ class ElasticPatch
     {
 	self::accountability($objectID, $_SESSION['oauthuserdata']->{'loginUsuario'}, "privater");
     }
+
+    static function verifyBitstream($bitstream_id)
+    {
+        global $pythonBdpiApi;
+        $url = "$pythonBdpiApi/bitstream/$bitstream_id/";
+        $response = json_decode(file_get_contents($url));
+        return $response;
+    }
 }
 
 /**
