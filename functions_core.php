@@ -630,7 +630,8 @@ class citation
 	$array_citation["title"] = $citacao["name"];
 	$title_parts = explode(': ',$citacao["name"]);
 	$array_citation["title-short"] = $title_parts[0];
-	$array_citation["subtitle"] = $title_parts[1];
+	// Ajuste para eliminar erros no error.log
+	$array_citation["subtitle"] = (isset($title_parts[1]))?$title_parts[1]:"";
 
 	if(!empty($citacao["inSupportOf"])){
 		$array_citation["genre"] = $citacao["inSupportOf"];
