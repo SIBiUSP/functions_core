@@ -1280,6 +1280,7 @@ class DSpaceREST
             )
         );
         $output = curl_exec($ch);
+        error_log($output);
         curl_close($ch);
 
     }
